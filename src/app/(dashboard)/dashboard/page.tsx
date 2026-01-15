@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PlusCircle, History, ArrowRight, LogOut, Calendar, ClipboardCheck, LayoutDashboard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/AuthContext"
+import { useBooking } from "@/context/BookingContext"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { BookingGrid } from "@/components/booking/BookingGrid"
@@ -12,8 +13,59 @@ import { AdminPanel } from "@/components/admin/AdminPanel"
 
 export default function DashboardPage() {
     const { user, logout } = useAuth()
+    const { bookings } = useBooking()
     const searchParams = useSearchParams()
     const router = useRouter()
+
+    // Get approved bookings for current user
+    const approvedBookings = bookings.filter(
+        b => b.user === user?.username && b.status === "Disetujui"
+    )
+
+    // Get rejected bookings for current user
+    const rejectedBookings = bookings.filter(
+        b => b.user === user?.username && b.status === "Ditolak"
+    )
+
+    // Track seen approved bookings count in localStorage
+    const [seenApprovedCount, setSeenApprovedCount] = useState<number>(0)
+    // Track seen rejected bookings count in localStorage
+    const [seenRejectedCount, setSeenRejectedCount] = useState<number>(0)
+
+    useEffect(() => {
+        if (user?.username) {
+            const approvedKey = `seenApproved_${user.username}`
+            const rejectedKey = `seenRejected_${user.username}`
+
+            const savedApproved = localStorage.getItem(approvedKey)
+            const savedRejected = localStorage.getItem(rejectedKey)
+
+            if (savedApproved) {
+                setSeenApprovedCount(parseInt(savedApproved, 10))
+            }
+            if (savedRejected) {
+                setSeenRejectedCount(parseInt(savedRejected, 10))
+            }
+        }
+    }, [user?.username])
+
+    // Calculate unseen counts (new notifications)
+    const unseenApprovedCount = Math.max(0, approvedBookings.length - seenApprovedCount)
+    const unseenRejectedCount = Math.max(0, rejectedBookings.length - seenRejectedCount)
+
+    // Function to mark all as seen
+    const markAllAsSeen = () => {
+        if (user?.username) {
+            const approvedKey = `seenApproved_${user.username}`
+            const rejectedKey = `seenRejected_${user.username}`
+
+            localStorage.setItem(approvedKey, approvedBookings.length.toString())
+            localStorage.setItem(rejectedKey, rejectedBookings.length.toString())
+
+            setSeenApprovedCount(approvedBookings.length)
+            setSeenRejectedCount(rejectedBookings.length)
+        }
+    }
 
     // State to handle active tab based on 'view' param
     const [activeTab, setActiveTab] = useState<string | null>(null)
@@ -37,6 +89,9 @@ export default function DashboardPage() {
             href: "/loan/new",
             color: "text-blue-600",
             bgColor: "bg-blue-100",
+            onClick: undefined as (() => void) | undefined,
+            notificationCount: undefined as number | undefined,
+            rejectedNotificationCount: undefined as number | undefined,
         },
         {
             title: "Riwayat Saya",
@@ -45,6 +100,9 @@ export default function DashboardPage() {
             href: "/loan/new?tab=history",
             color: "text-emerald-600",
             bgColor: "bg-emerald-100",
+            notificationCount: unseenApprovedCount,
+            rejectedNotificationCount: unseenRejectedCount,
+            onClick: markAllAsSeen,
         },
     ]
 
@@ -57,6 +115,9 @@ export default function DashboardPage() {
             href: "/dashboard?view=jadwal",
             color: "text-blue-600",
             bgColor: "bg-blue-100",
+            notificationCount: undefined as number | undefined,
+            rejectedNotificationCount: undefined as number | undefined,
+            onClick: undefined as (() => void) | undefined,
         },
         {
             title: "Daftar Persetujuan",
@@ -65,6 +126,9 @@ export default function DashboardPage() {
             href: "/dashboard?view=approval",
             color: "text-emerald-600",
             bgColor: "bg-emerald-100",
+            notificationCount: undefined as number | undefined,
+            rejectedNotificationCount: undefined as number | undefined,
+            onClick: undefined as (() => void) | undefined,
         },
         {
             title: "Riwayat Peminjaman",
@@ -73,6 +137,9 @@ export default function DashboardPage() {
             href: "/admin/history",
             color: "text-purple-600",
             bgColor: "bg-purple-100",
+            notificationCount: undefined as number | undefined,
+            rejectedNotificationCount: undefined as number | undefined,
+            onClick: undefined as (() => void) | undefined,
         },
     ]
 
@@ -170,11 +237,25 @@ export default function DashboardPage() {
 
             <div className={`grid gap-6 mx-auto ${user?.role === 'admin' ? 'md:grid-cols-3 max-w-5xl' : 'md:grid-cols-2 max-w-3xl'}`}>
                 {menuItems.map((item) => (
-                    <Link key={item.href} href={item.href} className="block group h-full">
+                    <Link key={item.href} href={item.href} className="block group h-full" onClick={item.onClick}>
                         <Card className="h-full transition-all hover:shadow-lg hover:-translate-y-1 hover:border-primary/50 cursor-pointer">
                             <CardHeader className="text-center pb-2">
-                                <div className={`w-16 h-16 rounded-2xl ${item.bgColor} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                                    <item.icon className={`h-8 w-8 ${item.color}`} />
+                                <div className="relative w-16 h-16 mx-auto mb-4">
+                                    <div className={`w-16 h-16 rounded-2xl ${item.bgColor} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                                        <item.icon className={`h-8 w-8 ${item.color}`} />
+                                    </div>
+                                    {/* Green badge for approved */}
+                                    {item.notificationCount && item.notificationCount > 0 && (
+                                        <div className="absolute -top-2 -right-2 w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white animate-pulse">
+                                            {item.notificationCount}
+                                        </div>
+                                    )}
+                                    {/* Red badge for rejected */}
+                                    {item.rejectedNotificationCount && item.rejectedNotificationCount > 0 && (
+                                        <div className={`absolute -top-2 w-7 h-7 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white animate-pulse ${item.notificationCount && item.notificationCount > 0 ? '-left-2' : '-right-2'}`}>
+                                            {item.rejectedNotificationCount}
+                                        </div>
+                                    )}
                                 </div>
                                 <CardTitle className="text-2xl group-hover:text-primary transition-colors">
                                     {item.title}

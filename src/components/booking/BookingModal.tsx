@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "../ui/textarea"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Upload, User, Users, Building2, ArrowLeft } from "lucide-react"
+import { Upload, Users, Building2, ArrowLeft } from "lucide-react"
 
 const daftarUKM = [
     "UKM GIBEI", "UKM STIMBARA", "UKM PSM", "UKM BASKET", "UKM BADMINTON",
@@ -21,7 +21,7 @@ const daftarOrmawa = [
     "HIMPUNAN DKV", "HIMPUNAN TEKNIK KIMIA"
 ]
 
-type BorrowerType = "individu" | "ukm" | "ormawa"
+type BorrowerType = "ukm" | "ormawa"
 type Step = "selection" | "form"
 
 export function BookingModal({ isOpen, onClose, onSubmit, selectedSlots }: {
@@ -39,6 +39,7 @@ export function BookingModal({ isOpen, onClose, onSubmit, selectedSlots }: {
 
     const [kakFile, setKakFile] = useState<File | null>(null)
     const [startMinute, setStartMinute] = useState<number>(0)
+    const [endMinute, setEndMinute] = useState<number>(0)
 
     // Calculate earliest start hour from selectedSlots
     const getStartHour = () => {
@@ -47,6 +48,15 @@ export function BookingModal({ isOpen, onClose, onSubmit, selectedSlots }: {
         return sortedTimes[0].split(":")[0]
     }
     const startHour = getStartHour()
+
+    // Calculate latest end hour from selectedSlots (last slot hour + 1)
+    const getEndHour = () => {
+        if (!selectedSlots.length) return "00"
+        const sortedTimes = selectedSlots.map(s => s.time).sort()
+        const lastHour = parseInt(sortedTimes[sortedTimes.length - 1].split(":")[0])
+        return (lastHour + 1).toString().padStart(2, '0')
+    }
+    const endHour = getEndHour()
 
     const equipmentOptions = ["Proyektor", "Sound System", "Kabel HDMI", "Kamera"]
 
@@ -59,6 +69,7 @@ export function BookingModal({ isOpen, onClose, onSubmit, selectedSlots }: {
 
         setKakFile(null)
         setStartMinute(0)
+        setEndMinute(0)
     }
 
     const handleClose = () => {
@@ -75,12 +86,13 @@ export function BookingModal({ isOpen, onClose, onSubmit, selectedSlots }: {
         e.preventDefault()
         onSubmit({
             tipePeminjam,
-            organisasi: tipePeminjam === "individu" ? undefined : organization,
+            organisasi: organization,
             keperluan,
             alat,
 
             kakFile: kakFile ? kakFile.name : undefined,
-            waktuMulai: `${startHour}:${startMinute.toString().padStart(2, '0')}`
+            waktuMulai: `${startHour}:${startMinute.toString().padStart(2, '0')}`,
+            waktuSelesai: `${endHour}:${endMinute.toString().padStart(2, '0')}`
         })
         handleClose()
     }
@@ -113,16 +125,7 @@ export function BookingModal({ isOpen, onClose, onSubmit, selectedSlots }: {
                 </DialogHeader>
 
                 {step === "selection" ? (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
-                        <div
-                            onClick={() => handleBorrowerSelect("individu")}
-                            className="cursor-pointer border-2 border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center gap-3 hover:border-blue-500 hover:bg-blue-50 transition-all group"
-                        >
-                            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                                <User className="w-6 h-6 text-slate-600 group-hover:text-blue-600" />
-                            </div>
-                            <span className="font-semibold text-slate-700 group-hover:text-blue-700">Individu</span>
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
 
                         <div
                             onClick={() => handleBorrowerSelect("ukm")}
@@ -219,6 +222,40 @@ export function BookingModal({ isOpen, onClose, onSubmit, selectedSlots }: {
                             </p>
                         </div>
 
+                        <div className="bg-slate-50 p-4 rounded-lg space-y-3">
+                            <Label className="font-medium text-slate-900">Detail Waktu Selesai</Label>
+                            <div className="flex items-end gap-4">
+                                <div className="space-y-1.5 flex-1">
+                                    <Label className="text-xs text-muted-foreground">Jam (Akhir)</Label>
+                                    <Input
+                                        value={endHour}
+                                        disabled
+                                        className="bg-slate-100 font-mono text-center"
+                                    />
+                                </div>
+                                <span className="pb-2 font-bold text-slate-400">:</span>
+                                <div className="space-y-1.5 flex-1">
+                                    <Label className="text-xs text-muted-foreground">Menit</Label>
+                                    <Input
+                                        type="number"
+                                        min={0}
+                                        max={59}
+                                        value={endMinute}
+                                        onChange={(e) => {
+                                            const val = parseInt(e.target.value)
+                                            if (!isNaN(val) && val >= 0 && val <= 59) {
+                                                setEndMinute(val)
+                                            }
+                                        }}
+                                        className="font-mono text-center"
+                                    />
+                                </div>
+                            </div>
+                            <p className="text-[10px] text-muted-foreground">
+                                *Selesai lebih awal (misal {endHour}:45)
+                            </p>
+                        </div>
+
                         {tipePeminjam === "ukm" && (
                             <div className="space-y-2">
                                 <Label htmlFor="ukm-select">Pilih UKM</Label>
@@ -284,28 +321,26 @@ export function BookingModal({ isOpen, onClose, onSubmit, selectedSlots }: {
                             </div>
                         </div>
 
-                        {tipePeminjam !== "individu" && (
-                            <div className="space-y-2">
-                                <Label htmlFor="kak">Upload KAK</Label>
-                                <div className="border-2 border-dashed rounded-lg p-4 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors relative">
-                                    <Upload className="h-6 w-6 text-muted-foreground mb-1" />
-                                    <span className="text-xs text-muted-foreground">
-                                        Upload PDF/DOCX
+                        <div className="space-y-2">
+                            <Label htmlFor="kak">Upload KAK</Label>
+                            <div className="border-2 border-dashed rounded-lg p-4 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors relative">
+                                <Upload className="h-6 w-6 text-muted-foreground mb-1" />
+                                <span className="text-xs text-muted-foreground">
+                                    Upload PDF/DOCX
+                                </span>
+                                <Input
+                                    id="kak"
+                                    type="file"
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKakFile(e.target.files?.[0] || null)}
+                                />
+                                {kakFile && (
+                                    <span className="text-xs text-primary font-medium mt-1 z-10">
+                                        {kakFile.name}
                                     </span>
-                                    <Input
-                                        id="kak"
-                                        type="file"
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setKakFile(e.target.files?.[0] || null)}
-                                    />
-                                    {kakFile && (
-                                        <span className="text-xs text-primary font-medium mt-1 z-10">
-                                            {kakFile.name}
-                                        </span>
-                                    )}
-                                </div>
+                                )}
                             </div>
-                        )}
+                        </div>
 
                         <DialogFooter>
                             <Button type="submit" className="w-full">Ajukan Peminjaman</Button>

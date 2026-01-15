@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
-    const [username, setUsername] = useState("")
+    const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
     const { login } = useAuth()
@@ -17,11 +17,11 @@ export default function LoginPage() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        const success = login(username, password)
+        const success = login(email, password)
         if (success) {
             router.push("/") // Redirect to the dashboard
         } else {
-            setError("Username atau password salah!")
+            setError("Email atau password salah!")
         }
     }
 
@@ -37,13 +37,14 @@ export default function LoginPage() {
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="username">Username</Label>
+                            <Label htmlFor="email">Email</Label>
                             <Input
-                                id="username"
-                                placeholder="Username"
+                                id="email"
+                                type="email"
+                                placeholder="Email"
                                 required
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
                         <div className="space-y-2">
@@ -68,7 +69,7 @@ export default function LoginPage() {
                         <ul className="space-y-1 list-disc pl-4">
                             <li>User: <span className="font-mono">mahasiswa1@gmail.com</span>, Pass: <span className="font-mono">mahasiswa1</span></li>
                             <li>User: <span className="font-mono">mahasiswa2@gmail.com</span>, Pass: <span className="font-mono">mahasiswa2</span></li>
-                            <li>User: <span className="font-mono">admin</span>, Pass: <span className="font-mono">admin</span></li>
+                            <li>User: <span className="font-mono">admin@gmail.com</span>, Pass: <span className="font-mono">admin</span></li>
                         </ul>
                     </div>
                 </CardContent>

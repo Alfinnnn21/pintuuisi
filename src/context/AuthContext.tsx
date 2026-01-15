@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             localStorage.setItem("user", JSON.stringify(newUser))
             return true
         }
-        if (username === "admin" && pass === "admin") {
+        if (username === "admin@gmail.com" && pass === "admin") {
             const newUser: User = { username: "Admin", role: "admin" }
             setUser(newUser)
             localStorage.setItem("user", JSON.stringify(newUser))
