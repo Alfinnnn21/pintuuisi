@@ -198,13 +198,14 @@ export function BookingGrid() {
 
             {/* Floating Action Button for Booking */}
             {user?.role === "mahasiswa" && !isPastDate() && (
-                <div className="sticky top-4 z-20 flex justify-end mb-4 pointer-events-none">
+                <div className="fixed bottom-6 right-6 z-50 md:sticky md:top-4 md:flex md:justify-end md:mb-4 pointer-events-none">
                     <Button
                         size="lg"
-                        className="shadow-lg pointer-events-auto bg-[#b91c1c] hover:bg-[#991b1b] text-white"
+                        className="shadow-xl pointer-events-auto bg-[#b91c1c] hover:bg-[#991b1b] text-white rounded-full md:rounded-lg px-6"
                         onClick={handleBookingTrigger}
                     >
-                        Pesan Ruangan ({selectedSlots.length})
+                        <span className="md:hidden">+</span>
+                        <span className="hidden md:inline">Pesan Ruangan ({selectedSlots.length})</span>
                     </Button>
                 </div>
             )}
@@ -233,7 +234,7 @@ export function BookingGrid() {
                     <table className="w-full text-sm text-left">
                         <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                             <tr>
-                                <th className="px-4 py-3 font-medium sticky left-0 bg-slate-50 z-10 w-64 min-w-[200px]">
+                                <th className="px-4 py-3 font-medium sticky left-0 bg-slate-50 z-10 w-32 min-w-[120px] md:w-64 md:min-w-[200px]">
                                     Ruangan
                                 </th>
                                 {OPERATIONAL_HOURS.map(hour => (

@@ -8,7 +8,7 @@ import { AdminPanel } from "@/components/admin/AdminPanel"
 import { Button } from "@/components/ui/button"
 import { useBooking } from "@/context/BookingContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LogOut, LayoutDashboard, Download, Calendar, History, ClipboardCheck } from "lucide-react"
+import { LogOut, LayoutDashboard, Download, Calendar, History, ClipboardCheck, Check } from "lucide-react"
 
 function LoanPageContent() {
     const { user, logout } = useAuth()
@@ -16,6 +16,7 @@ function LoanPageContent() {
     const searchParams = useSearchParams()
     const router = useRouter()
     const [activeTab, setActiveTab] = useState<"grid" | "history" | "admin">("grid")
+    const [showToast, setShowToast] = useState(false)
 
     useEffect(() => {
         const tab = searchParams.get("tab")
@@ -355,6 +356,8 @@ function LoanPageContent() {
         link.click()
         document.body.removeChild(link)
         URL.revokeObjectURL(url)
+        setShowToast(true)
+        setTimeout(() => setShowToast(false), 4000)
     }
 
     if (!user) {
@@ -364,78 +367,97 @@ function LoanPageContent() {
     const myBookings = bookings.filter(b => b.user.toLowerCase() === user.username.toLowerCase())
 
     return (
-        <div className="max-w-7xl mx-auto p-4 space-y-6">
-            {/* Navigation Tabs - Updated with white palette */}
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                <div className="flex gap-2 flex-wrap">
-                    <Button
-                        variant="ghost"
-                        onClick={() => router.push("/")}
-                        className="rounded-full gap-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100"
-                    >
-                        <LayoutDashboard className="w-4 h-4" />
-                        Dashboard
-                    </Button>
+        <div className="max-w-7xl mx-auto p-4 space-y-4 md:space-y-6 pb-20 md:pb-4">
+            {/* Toast Notification */}
+            {showToast && (
+                <div className="fixed top-4 right-4 md:bottom-4 md:top-auto z-50 animate-in slide-in-from-top md:slide-in-from-bottom fade-in duration-300">
+                    <div className="bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3">
+                        <div className="bg-white/20 p-1 rounded-full">
+                            <Check className="w-4 h-4" />
+                        </div>
+                        <div>
+                            <p className="font-semibold text-sm">Download Berhasil</p>
+                            <p className="text-xs text-green-100">Bukti telah disetujui oleh admin.</p>
+                        </div>
+                    </div>
+                </div>
+            )}
 
-                    <div className="w-px h-8 bg-slate-200 mx-2 self-center" />
-
-                    <Button
-                        variant={activeTab === "grid" ? "outline" : "ghost"}
-                        onClick={() => setActiveTab("grid")}
-                        className={`rounded-full gap-2 ${activeTab === "grid" ? "bg-white border-2 border-slate-200 text-slate-800 shadow-sm" : "text-slate-600 hover:text-slate-800 hover:bg-slate-100"}`}
-                    >
-                        <Calendar className="w-4 h-4" />
-                        Jadwal Ruangan
-                    </Button>
-
-                    {user.role === "mahasiswa" && (
-                        <Button
-                            variant={activeTab === "history" ? "outline" : "ghost"}
-                            onClick={() => setActiveTab("history")}
-                            className={`rounded-full gap-2 ${activeTab === "history" ? "bg-white border-2 border-slate-200 text-slate-800 shadow-sm" : "text-slate-600 hover:text-slate-800 hover:bg-slate-100"}`}
-                        >
-                            <History className="w-4 h-4" />
-                            Riwayat Saya
-                        </Button>
-                    )}
-
-                    {user.role === "admin" && (
-                        <Button
-                            variant={activeTab === "admin" ? "outline" : "ghost"}
-                            onClick={() => setActiveTab("admin")}
-                            className={`rounded-full gap-2 ${activeTab === "admin" ? "bg-white border-2 border-slate-200 text-slate-800 shadow-sm" : "text-slate-600 hover:text-slate-800 hover:bg-slate-100"}`}
-                        >
-                            <ClipboardCheck className="w-4 h-4" />
-                            Daftar Persetujuan
-                        </Button>
-                    )}
-
-                    {user.role === "admin" && (
+            {/* Navigation Tabs - Updated for Mobile Ergonomics (Scrollable) */}
+            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm md:static md:bg-transparent -mx-4 px-4 py-2 border-b border-slate-200 md:border-b md:pb-2">
+                <div className="flex items-center justify-between gap-4">
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 mask-linear-fade w-full md:w-auto">
                         <Button
                             variant="ghost"
-                            onClick={() => router.push("/admin/history")}
-                            className="rounded-full gap-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100"
+                            onClick={() => router.push("/")}
+                            className="rounded-full gap-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 flex-shrink-0"
                         >
-                            <History className="w-4 h-4" />
-                            Riwayat Peminjaman
+                            <LayoutDashboard className="w-4 h-4" />
+                            <span className="hidden sm:inline">Dashboard</span>
                         </Button>
-                    )}
-                </div>
 
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={logout}
-                    className="text-slate-600 hover:text-slate-800 hover:bg-slate-100 gap-2"
-                >
-                    <LogOut className="w-4 h-4" />
-                    Logout
-                </Button>
+                        <div className="w-px h-6 bg-slate-200 mx-1 self-center flex-shrink-0" />
+
+                        <Button
+                            variant={activeTab === "grid" ? "outline" : "ghost"}
+                            onClick={() => setActiveTab("grid")}
+                            className={`rounded-full gap-2 flex-shrink-0 ${activeTab === "grid" ? "bg-white border-slate-200 text-[#b91c1c] font-medium shadow-sm ring-1 ring-slate-100" : "text-slate-600 hover:text-slate-800 hover:bg-slate-100"}`}
+                        >
+                            <Calendar className="w-4 h-4" />
+                            Jadwal
+                        </Button>
+
+                        {user.role === "mahasiswa" && (
+                            <Button
+                                variant={activeTab === "history" ? "outline" : "ghost"}
+                                onClick={() => setActiveTab("history")}
+                                className={`rounded-full gap-2 flex-shrink-0 ${activeTab === "history" ? "bg-white border-slate-200 text-[#b91c1c] font-medium shadow-sm ring-1 ring-slate-100" : "text-slate-600 hover:text-slate-800 hover:bg-slate-100"}`}
+                            >
+                                <History className="w-4 h-4" />
+                                Riwayat
+                            </Button>
+                        )}
+
+                        {user.role === "admin" && (
+                            <>
+                                <Button
+                                    variant={activeTab === "admin" ? "outline" : "ghost"}
+                                    onClick={() => setActiveTab("admin")}
+                                    className={`rounded-full gap-2 flex-shrink-0 ${activeTab === "admin" ? "bg-white border-slate-200 text-[#b91c1c] font-medium shadow-sm ring-1 ring-slate-100" : "text-slate-600 hover:text-slate-800 hover:bg-slate-100"}`}
+                                >
+                                    <ClipboardCheck className="w-4 h-4" />
+                                    Approval
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => router.push("/admin/history")}
+                                    className="rounded-full gap-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 flex-shrink-0"
+                                >
+                                    <History className="w-4 h-4" />
+                                    Semua Riwayat
+                                </Button>
+                            </>
+                        )}
+                    </div>
+
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={logout}
+                        className="text-slate-500 hover:text-red-600 hover:bg-red-50 flex-shrink-0"
+                    >
+                        <LogOut className="w-5 h-5" />
+                    </Button>
+                </div>
             </div>
 
             {activeTab === "grid" && (
-                <BookingGrid />
+                <div className="animate-in fade-in duration-500">
+                    <BookingGrid />
+                </div>
             )}
+
+            {/* ... rest of components ... */}
 
             {activeTab === "admin" && user.role === "admin" && (
                 <AdminPanel />
