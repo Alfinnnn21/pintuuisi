@@ -24,11 +24,12 @@ const daftarOrmawa = [
 type BorrowerType = "ukm" | "ormawa"
 type Step = "selection" | "form"
 
-export function BookingModal({ isOpen, onClose, onSubmit, selectedSlots }: {
+export function BookingModal({ isOpen, onClose, onSubmit, selectedSlots, selectedDate }: {
     isOpen: boolean,
     onClose: () => void,
     onSubmit: (data: any) => void,
-    selectedSlots: { room: string, time: string }[]
+    selectedSlots: { room: string, time: string }[],
+    selectedDate?: string
 }) {
     const [step, setStep] = useState<Step>("selection")
     const [tipePeminjam, setTipePeminjam] = useState<BorrowerType | null>(null)
@@ -167,6 +168,12 @@ export function BookingModal({ isOpen, onClose, onSubmit, selectedSlots }: {
 
                         <div className="bg-slate-50 p-4 rounded-lg text-sm space-y-2">
                             <p className="font-medium text-slate-900">Ringkasan Peminjaman:</p>
+                            {selectedDate && (
+                                <div className="flex items-center gap-2 text-slate-700">
+                                    <span className="font-semibold">Tanggal:</span>
+                                    <span>{selectedDate}</span>
+                                </div>
+                            )}
                             {Object.entries(slotsByRoom).map(([room, times]) => (
                                 <div key={room} className="flex flex-col">
                                     <span className="font-semibold">{room}</span>

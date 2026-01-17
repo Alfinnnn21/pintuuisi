@@ -25,13 +25,13 @@ export default function AdminHistoryPage() {
 
     return (
         <div className="max-w-6xl mx-auto pt-4 p-4">
-            {/* Navigation Bar */}
+            {/* Navigation Bar - Updated with white palette and red accents */}
             <div className="flex items-center justify-between border-b pb-4 mb-6">
                 <div className="flex gap-2 overflow-x-auto pb-1">
                     <Button
                         variant="ghost"
                         onClick={() => router.push("/dashboard")}
-                        className="rounded-full gap-2"
+                        className="rounded-full gap-2 hover:bg-slate-100"
                     >
                         <LayoutDashboard className="w-4 h-4" />
                         Dashboard
@@ -40,7 +40,7 @@ export default function AdminHistoryPage() {
                     <Button
                         variant="ghost"
                         onClick={() => router.push("/dashboard?view=jadwal")}
-                        className="rounded-full gap-2"
+                        className="rounded-full gap-2 hover:bg-slate-100"
                     >
                         <Calendar className="w-4 h-4" />
                         Jadwal Ruangan
@@ -48,16 +48,16 @@ export default function AdminHistoryPage() {
                     <Button
                         variant="ghost"
                         onClick={() => router.push("/dashboard?view=approval")}
-                        className="rounded-full gap-2"
+                        className="rounded-full gap-2 hover:bg-slate-100"
                     >
                         <ClipboardCheck className="w-4 h-4" />
                         Daftar Persetujuan
                     </Button>
                     <Button
-                        variant="default"
-                        className="rounded-full gap-2 bg-blue-800 hover:bg-blue-900 text-white shadow-sm"
+                        variant="outline"
+                        className="rounded-full gap-2 bg-white border-2 border-slate-200 text-slate-800 shadow-sm"
                     >
-                        <History className="w-4 h-4 text-white" />
+                        <History className="w-4 h-4" />
                         Riwayat Peminjaman
                     </Button>
                 </div>
@@ -65,7 +65,7 @@ export default function AdminHistoryPage() {
                     variant="ghost"
                     size="sm"
                     onClick={logout}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50 gap-2"
+                    className="text-slate-600 hover:text-slate-800 hover:bg-slate-100 gap-2"
                 >
                     <LogOut className="w-4 h-4" />
                     Logout
@@ -74,7 +74,10 @@ export default function AdminHistoryPage() {
 
             <div className="space-y-6">
                 <div>
-                    <h2 className="text-xl font-semibold mb-4">Semua Riwayat Peminjaman</h2>
+                    <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                        <History className="w-5 h-5 text-[#b91c1c]" />
+                        Semua Riwayat Peminjaman
+                    </h2>
                 </div>
 
                 {(() => {
@@ -137,7 +140,7 @@ export default function AdminHistoryPage() {
 
                     if (groupedHistoryArray.length === 0) {
                         return (
-                            <div className="text-center py-12 text-muted-foreground bg-slate-50 rounded-lg border border-dashed">
+                            <div className="text-center py-12 text-slate-500 bg-white rounded-2xl border border-slate-200 shadow-sm">
                                 Belum ada riwayat peminjaman yang selesai.
                             </div>
                         )
@@ -146,37 +149,40 @@ export default function AdminHistoryPage() {
                     return (
                         <div className="grid gap-4">
                             {groupedHistoryArray.map((group, idx) => (
-                                <Card key={`${group.ids[0]}-${idx}`}>
+                                <Card key={`${group.ids[0]}-${idx}`} className="bg-white border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                                     <CardHeader className="pb-2">
                                         <div className="flex justify-between items-start">
                                             <div>
-                                                <CardTitle className="text-base">{group.room}</CardTitle>
-                                                <div className="text-sm text-muted-foreground">
+                                                <CardTitle className="text-base text-slate-800">{group.room}</CardTitle>
+                                                <div className="text-sm text-slate-500">
                                                     {group.date} | {group.startTime} - {group.endTime}
                                                 </div>
                                             </div>
-                                            <Badge variant={group.status === "Disetujui" ? "default" : "destructive"}>
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${group.status === "Disetujui"
+                                                    ? "bg-green-100 text-green-700"
+                                                    : "bg-red-100 text-red-700"
+                                                }`}>
                                                 {group.status}
-                                            </Badge>
+                                            </span>
                                         </div>
                                     </CardHeader>
                                     <CardContent>
                                         <div className="grid md:grid-cols-2 gap-4 text-sm">
                                             <div className="space-y-1">
-                                                <div><span className="font-medium">Peminjam:</span> {group.user}</div>
+                                                <div><span className="font-medium text-slate-700">Peminjam:</span> <span className="text-slate-600">{group.user}</span></div>
                                                 {group.organisasi && (
                                                     <div>
-                                                        <span className="font-medium">
+                                                        <span className="font-medium text-slate-700">
                                                             {group.tipePeminjam === "ukm" ? "Asal UKM:" : "Asal Himpunan:"}
                                                         </span>{" "}
-                                                        <span>{group.organisasi}</span>
+                                                        <span className="text-slate-600">{group.organisasi}</span>
                                                     </div>
                                                 )}
-                                                <div><span className="font-medium">Keperluan:</span> {group.details.keperluan}</div>
+                                                <div><span className="font-medium text-slate-700">Keperluan:</span> <span className="text-slate-600">{group.details.keperluan}</span></div>
                                             </div>
 
                                             {group.status === "Ditolak" && group.alasanPenolakan && (
-                                                <div className="bg-red-50 p-3 rounded-md border border-red-100 text-red-800">
+                                                <div className="bg-red-50 p-3 rounded-xl border border-red-100 text-red-800">
                                                     <span className="font-medium block mb-1">Alasan Penolakan:</span>
                                                     {group.alasanPenolakan}
                                                 </div>

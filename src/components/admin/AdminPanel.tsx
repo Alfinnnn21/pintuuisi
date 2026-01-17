@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useBooking } from "@/context/BookingContext"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Check, X } from "lucide-react"
+import { Check, X, ClipboardCheck } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
@@ -110,24 +110,27 @@ export function AdminPanel() {
 
     return (
         <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Daftar Persetujuan Peminjaman</h2>
+            <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                <ClipboardCheck className="w-5 h-5 text-[#b91c1c]" />
+                Daftar Persetujuan Peminjaman
+            </h2>
             {groupedBookings.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground bg-slate-50 rounded-lg border border-dashed">
+                <div className="text-center py-8 text-slate-500 bg-white rounded-2xl border border-slate-200 shadow-sm">
                     Tidak ada permintaan peminjaman yang menunggu persetujuan.
                 </div>
             ) : (
                 <div className="grid gap-4">
                     {groupedBookings.map((group, index) => (
-                        <Card key={`${group.date}-${group.room}-${index}`}>
+                        <Card key={`${group.date}-${group.room}-${index}`} className="bg-white border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                             <CardHeader className="pb-2">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <CardTitle className="text-base">{group.room}</CardTitle>
-                                        <CardDescription>
+                                        <CardTitle className="text-base text-slate-800">{group.room}</CardTitle>
+                                        <CardDescription className="text-slate-500">
                                             {group.date} | {group.startTime} - {group.endTime}
                                         </CardDescription>
                                     </div>
-                                    <div className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full font-medium">
+                                    <div className="bg-amber-100 text-amber-800 text-xs px-3 py-1 rounded-full font-medium">
                                         Menunggu ({group.ids.length} Slot)
                                     </div>
                                 </div>
@@ -135,42 +138,43 @@ export function AdminPanel() {
                             <CardContent>
                                 <div className="space-y-2 text-sm">
                                     <div>
-                                        <span className="font-medium">Peminjam:</span> {group.user}
+                                        <span className="font-medium text-slate-700">Peminjam:</span> <span className="text-slate-600">{group.user}</span>
                                     </div>
                                     {group.tipePeminjam === "ukm" && (
                                         <div>
-                                            <span className="font-medium">Asal UKM:</span> {group.organisasi}
+                                            <span className="font-medium text-slate-700">Asal UKM:</span> <span className="text-slate-600">{group.organisasi}</span>
                                         </div>
                                     )}
                                     {group.tipePeminjam === "ormawa" && (
                                         <div>
-                                            <span className="font-medium">Asal Himpunan:</span> {group.organisasi}
+                                            <span className="font-medium text-slate-700">Asal Himpunan:</span> <span className="text-slate-600">{group.organisasi}</span>
                                         </div>
                                     )}
                                     <div>
-                                        <span className="font-medium">Keperluan:</span> {group.details.keperluan}
+                                        <span className="font-medium text-slate-700">Keperluan:</span> <span className="text-slate-600">{group.details.keperluan}</span>
                                     </div>
                                     <div>
-                                        <span className="font-medium">Alat:</span> {safeRenderAlat(group.details.alat)}
+                                        <span className="font-medium text-slate-700">Alat:</span> <span className="text-slate-600">{safeRenderAlat(group.details.alat)}</span>
                                     </div>
                                     {group.details.kakFile && (
                                         <div>
-                                            <span className="font-medium">File KAK:</span> {group.details.kakFile}
+                                            <span className="font-medium text-slate-700">File KAK:</span> <span className="text-slate-600">{group.details.kakFile}</span>
                                         </div>
                                     )}
                                 </div>
                                 <div className="flex justify-end gap-2 mt-4">
                                     <Button
-                                        variant="destructive"
+                                        variant="outline"
                                         size="sm"
                                         onClick={() => handleRejectClick(group.ids)}
+                                        className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
                                     >
                                         <X className="w-4 h-4 mr-1" /> Tolak
                                     </Button>
                                     <Button
                                         variant="default"
                                         size="sm"
-                                        className="bg-green-600 hover:bg-green-700"
+                                        className="bg-green-600 hover:bg-green-700 text-white"
                                         onClick={() => handleBulkApprove(group.ids)}
                                     >
                                         <Check className="w-4 h-4 mr-1" /> Setujui
@@ -183,28 +187,29 @@ export function AdminPanel() {
             )}
 
             <Dialog open={!!rejectIds} onOpenChange={(open) => !open && setRejectIds(null)}>
-                <DialogContent>
+                <DialogContent className="bg-white">
                     <DialogHeader>
-                        <DialogTitle>Masukkan Alasan Penolakan</DialogTitle>
-                        <DialogDescription>
+                        <DialogTitle className="text-slate-800">Masukkan Alasan Penolakan</DialogTitle>
+                        <DialogDescription className="text-slate-500">
                             Jelaskan mengapa permohonan ini ditolak (akan diterapkan pada {rejectIds?.length} slot yang dipilih).
                         </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         <div className="space-y-2">
-                            <Label htmlFor="reason">Alasan</Label>
+                            <Label htmlFor="reason" className="text-slate-700">Alasan</Label>
                             <Textarea
                                 id="reason"
                                 placeholder="Contoh: Ruangan sedang direnovasi, Jadwal bentrok dengan kegiatan fakultas, dll."
                                 value={rejectReason}
                                 onChange={(e) => setRejectReason(e.target.value)}
+                                className="border-slate-200 focus:border-[#b91c1c] focus:ring-[#b91c1c]"
                             />
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setRejectIds(null)}>Batal</Button>
+                        <Button variant="outline" onClick={() => setRejectIds(null)} className="border-slate-200">Batal</Button>
                         <Button
-                            variant="destructive"
+                            className="bg-red-600 hover:bg-red-700 text-white"
                             onClick={confirmReject}
                             disabled={!rejectReason.trim()}
                         >

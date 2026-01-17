@@ -1,7 +1,5 @@
 "use client"
 
-"use client"
-
 import { useState } from "react"
 import { useBooking } from "@/context/BookingContext"
 import { useAuth } from "@/context/AuthContext"
@@ -9,6 +7,7 @@ import { ROOM_LIST, OPERATIONAL_HOURS } from "@/lib/constants"
 import { BookingModal } from "./BookingModal"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
 
 export function BookingGrid() {
     const { bookings, addBooking } = useBooking()
@@ -16,19 +15,76 @@ export function BookingGrid() {
     const [selectedSlots, setSelectedSlots] = useState<{ room: string, time: string }[]>([])
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-    // Helper to find booking for a cell
-    // FIX: Ignore "Ditolak" status so the slot appears available
+    // Date navigation state
+    const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+
+    // Format date for display
+    const formatDisplayDate = (date: Date) => {
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+        return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`
+    }
+
+    // Format date for comparison (YYYY-MM-DD)
+    const formatDateISO = (date: Date) => {
+        return date.toISOString().split('T')[0]
+    }
+
+    // Check if selected date is today
+    const isToday = formatDateISO(selectedDate) === formatDateISO(new Date())
+
+    // Navigation functions
+    const goToPreviousDay = () => {
+        const newDate = new Date(selectedDate)
+        newDate.setDate(newDate.getDate() - 1)
+        setSelectedDate(newDate)
+        setSelectedSlots([]) // Clear selection when changing date
+    }
+
+    const goToNextDay = () => {
+        const newDate = new Date(selectedDate)
+        newDate.setDate(newDate.getDate() + 1)
+        setSelectedDate(newDate)
+        setSelectedSlots([]) // Clear selection when changing date
+    }
+
+    const goToToday = () => {
+        setSelectedDate(new Date())
+        setSelectedSlots([])
+    }
+
+    // Handle date input change
+    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newDate = new Date(e.target.value)
+        if (!isNaN(newDate.getTime())) {
+            setSelectedDate(newDate)
+            setSelectedSlots([])
+        }
+    }
+
+    // Helper to find booking for a cell - using selected date
     const getBooking = (room: string, time: string) => {
+        const dateStr = formatDateISO(selectedDate)
         return bookings.find(b =>
             b.room === room &&
             b.time === time &&
-            b.date === new Date().toISOString().split('T')[0] &&
+            b.date === dateStr &&
             b.status !== "Ditolak"
         )
     }
 
+    // Check if the selected date is in the past
+    const isPastDate = () => {
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        const selected = new Date(selectedDate)
+        selected.setHours(0, 0, 0, 0)
+        return selected < today
+    }
+
     const toggleSlotSelection = (room: string, time: string) => {
         if (!user || user.role !== "mahasiswa") return
+        if (isPastDate()) return // Cannot book past dates
 
         const existingBooking = getBooking(room, time)
         if (existingBooking) return // Cannot select booked slots
@@ -65,7 +121,7 @@ export function BookingGrid() {
                 return {
                     room: slot.room,
                     time: paramsTime,
-                    date: new Date().toISOString().split('T')[0],
+                    date: formatDateISO(selectedDate), // Use selected date instead of today
                     user: user.username,
                     tipePeminjam,
                     organisasi,
@@ -80,12 +136,72 @@ export function BookingGrid() {
 
     return (
         <div className="space-y-4 relative">
+            {/* Date Navigation */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    {/* Date Display and Navigation */}
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={goToPreviousDay}
+                            className="border-slate-200 hover:bg-slate-100"
+                        >
+                            <ChevronLeft className="w-4 h-4" />
+                        </Button>
+
+                        <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl min-w-[280px] justify-center">
+                            <Calendar className="w-5 h-5 text-[#b91c1c]" />
+                            <span className="font-semibold text-slate-800">
+                                {formatDisplayDate(selectedDate)}
+                            </span>
+                        </div>
+
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={goToNextDay}
+                            className="border-slate-200 hover:bg-slate-100"
+                        >
+                            <ChevronRight className="w-4 h-4" />
+                        </Button>
+                    </div>
+
+                    {/* Date Picker and Today Button */}
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="date"
+                            value={formatDateISO(selectedDate)}
+                            onChange={handleDateChange}
+                            className="px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#b91c1c]/20 focus:border-[#b91c1c]"
+                        />
+                        {!isToday && (
+                            <Button
+                                variant="outline"
+                                onClick={goToToday}
+                                className="border-[#b91c1c] text-[#b91c1c] hover:bg-[#b91c1c]/10"
+                            >
+                                Hari Ini
+                            </Button>
+                        )}
+                    </div>
+                </div>
+
+                {/* Past Date Warning */}
+                {isPastDate() && (
+                    <div className="mt-3 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 text-sm flex items-center gap-2">
+                        <span>⚠️</span>
+                        <span>Anda sedang melihat jadwal tanggal yang sudah lewat. Peminjaman tidak dapat dilakukan untuk tanggal ini.</span>
+                    </div>
+                )}
+            </div>
+
             {/* Floating Action Button for Booking */}
-            {user?.role === "mahasiswa" && (
+            {user?.role === "mahasiswa" && !isPastDate() && (
                 <div className="sticky top-4 z-20 flex justify-end mb-4 pointer-events-none">
                     <Button
                         size="lg"
-                        className="shadow-lg pointer-events-auto"
+                        className="shadow-lg pointer-events-auto bg-[#b91c1c] hover:bg-[#991b1b] text-white"
                         onClick={handleBookingTrigger}
                     >
                         Pesan Ruangan ({selectedSlots.length})
@@ -93,29 +209,29 @@ export function BookingGrid() {
                 </div>
             )}
 
-            <div className="flex items-center gap-4 text-sm mb-4">
+            <div className="flex items-center gap-4 text-sm mb-4 flex-wrap">
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-white border border-slate-200 rounded"></div>
-                    <span>Tersedia</span>
+                    <span className="text-slate-600">Tersedia</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 bg-blue-100 border border-blue-300 rounded"></div>
-                    <span>Dipilih</span>
+                    <span className="text-slate-600">Dipilih</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
-                    <span>Menunggu Konfirmasi</span>
+                    <div className="w-4 h-4 bg-amber-100 border border-amber-200 rounded"></div>
+                    <span className="text-slate-600">Menunggu Konfirmasi</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
-                    <span>Terisi / Disetujui</span>
+                    <div className="w-4 h-4 bg-[#b91c1c]/20 border border-[#b91c1c]/30 rounded"></div>
+                    <span className="text-slate-600">Terisi / Disetujui</span>
                 </div>
             </div>
 
-            <div className="border rounded-lg overflow-hidden bg-white shadow-sm">
+            <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b">
+                        <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                             <tr>
                                 <th className="px-4 py-3 font-medium sticky left-0 bg-slate-50 z-10 w-64 min-w-[200px]">
                                     Ruangan
@@ -130,24 +246,27 @@ export function BookingGrid() {
                         <tbody className="divide-y divide-slate-200">
                             {ROOM_LIST.map(room => (
                                 <tr key={room} className="hover:bg-slate-50/50">
-                                    <td className="px-4 py-3 font-medium text-slate-900 sticky left-0 bg-white z-10 border-r">
+                                    <td className="px-4 py-3 font-medium text-slate-800 sticky left-0 bg-white z-10 border-r border-slate-200">
                                         {room}
                                     </td>
                                     {OPERATIONAL_HOURS.map(hour => {
                                         const booking = getBooking(room, hour)
                                         const isSelected = selectedSlots.some(s => s.room === room && s.time === hour)
+                                        const isPast = isPastDate()
 
-                                        let cellClass = "bg-white hover:bg-slate-50 cursor-pointer"
+                                        let cellClass = isPast
+                                            ? "bg-slate-100 cursor-not-allowed"
+                                            : "bg-white hover:bg-slate-50 cursor-pointer"
                                         let cellContent = null
 
                                         if (booking) {
                                             if (booking.status === "Menunggu") {
-                                                cellClass = "bg-yellow-100 hover:bg-yellow-200 cursor-not-allowed"
+                                                cellClass = "bg-amber-100 hover:bg-amber-200 cursor-not-allowed"
                                             } else if (booking.status === "Disetujui") {
-                                                cellClass = "bg-red-100 hover:bg-red-200 cursor-not-allowed"
+                                                cellClass = "bg-[#b91c1c]/20 hover:bg-[#b91c1c]/30 cursor-not-allowed"
                                             }
                                             cellContent = (
-                                                <div className="text-xs font-medium truncate max-w-[80px] mx-auto" title={booking.user}>
+                                                <div className="text-xs font-medium truncate max-w-[80px] mx-auto text-slate-700" title={booking.user}>
                                                     {booking.user}
                                                 </div>
                                             )
@@ -158,8 +277,8 @@ export function BookingGrid() {
                                         return (
                                             <td
                                                 key={`${room}-${hour}`}
-                                                className={cn("px-2 py-2 border-r last:border-r-0 transition-colors text-center", cellClass)}
-                                                onClick={() => !booking && toggleSlotSelection(room, hour)}
+                                                className={cn("px-2 py-2 border-r border-slate-100 last:border-r-0 transition-colors text-center", cellClass)}
+                                                onClick={() => !booking && !isPast && toggleSlotSelection(room, hour)}
                                             >
                                                 {cellContent}
                                             </td>
@@ -177,6 +296,7 @@ export function BookingGrid() {
                 onClose={() => setIsModalOpen(false)}
                 onSubmit={handleBookingSubmit}
                 selectedSlots={selectedSlots}
+                selectedDate={formatDisplayDate(selectedDate)}
             />
         </div>
     )

@@ -8,7 +8,7 @@ import { AdminPanel } from "@/components/admin/AdminPanel"
 import { Button } from "@/components/ui/button"
 import { useBooking } from "@/context/BookingContext"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LogOut, LayoutDashboard, Download } from "lucide-react"
+import { LogOut, LayoutDashboard, Download, Calendar, History, ClipboardCheck } from "lucide-react"
 
 function LoanPageContent() {
     const { user, logout } = useAuth()
@@ -358,51 +358,54 @@ function LoanPageContent() {
     }
 
     if (!user) {
-        return <div className="p-8 text-center">Silakan login terlebih dahulu.</div>
+        return <div className="p-8 text-center text-slate-500">Silakan login terlebih dahulu.</div>
     }
 
     const myBookings = bookings.filter(b => b.user.toLowerCase() === user.username.toLowerCase())
 
     return (
         <div className="max-w-7xl mx-auto p-4 space-y-6">
-            {/* Clean UI: No Header, just Tabs */}
-            <div className="flex items-center justify-between border-b pb-2">
-                <div className="flex gap-2">
+            {/* Navigation Tabs - Updated with white palette */}
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                <div className="flex gap-2 flex-wrap">
                     <Button
                         variant="ghost"
                         onClick={() => router.push("/")}
-                        className="rounded-full gap-2 text-muted-foreground hover:text-primary"
+                        className="rounded-full gap-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100"
                     >
                         <LayoutDashboard className="w-4 h-4" />
                         Dashboard
                     </Button>
 
-                    <div className="w-px h-8 bg-border mx-2" />
+                    <div className="w-px h-8 bg-slate-200 mx-2 self-center" />
 
                     <Button
-                        variant={activeTab === "grid" ? "default" : "ghost"}
+                        variant={activeTab === "grid" ? "outline" : "ghost"}
                         onClick={() => setActiveTab("grid")}
-                        className="rounded-full"
+                        className={`rounded-full gap-2 ${activeTab === "grid" ? "bg-white border-2 border-slate-200 text-slate-800 shadow-sm" : "text-slate-600 hover:text-slate-800 hover:bg-slate-100"}`}
                     >
+                        <Calendar className="w-4 h-4" />
                         Jadwal Ruangan
                     </Button>
 
                     {user.role === "mahasiswa" && (
                         <Button
-                            variant={activeTab === "history" ? "default" : "ghost"}
+                            variant={activeTab === "history" ? "outline" : "ghost"}
                             onClick={() => setActiveTab("history")}
-                            className="rounded-full"
+                            className={`rounded-full gap-2 ${activeTab === "history" ? "bg-white border-2 border-slate-200 text-slate-800 shadow-sm" : "text-slate-600 hover:text-slate-800 hover:bg-slate-100"}`}
                         >
+                            <History className="w-4 h-4" />
                             Riwayat Saya
                         </Button>
                     )}
 
                     {user.role === "admin" && (
                         <Button
-                            variant={activeTab === "admin" ? "default" : "ghost"}
+                            variant={activeTab === "admin" ? "outline" : "ghost"}
                             onClick={() => setActiveTab("admin")}
-                            className="rounded-full"
+                            className={`rounded-full gap-2 ${activeTab === "admin" ? "bg-white border-2 border-slate-200 text-slate-800 shadow-sm" : "text-slate-600 hover:text-slate-800 hover:bg-slate-100"}`}
                         >
+                            <ClipboardCheck className="w-4 h-4" />
                             Daftar Persetujuan
                         </Button>
                     )}
@@ -411,8 +414,9 @@ function LoanPageContent() {
                         <Button
                             variant="ghost"
                             onClick={() => router.push("/admin/history")}
-                            className="rounded-full"
+                            className="rounded-full gap-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100"
                         >
+                            <History className="w-4 h-4" />
                             Riwayat Peminjaman
                         </Button>
                     )}
@@ -422,7 +426,7 @@ function LoanPageContent() {
                     variant="ghost"
                     size="sm"
                     onClick={logout}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50 gap-2"
+                    className="text-slate-600 hover:text-slate-800 hover:bg-slate-100 gap-2"
                 >
                     <LogOut className="w-4 h-4" />
                     Logout
@@ -439,7 +443,10 @@ function LoanPageContent() {
 
             {activeTab === "history" && user.role === "mahasiswa" && (
                 <div className="space-y-4">
-                    <h2 className="text-xl font-semibold">Riwayat Peminjaman Saya</h2>
+                    <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
+                        <History className="w-5 h-5 text-[#b91c1c]" />
+                        Riwayat Peminjaman Saya
+                    </h2>
                     {(() => {
                         // Grouping Logic
                         const groupStudentBookings = (bookings: typeof myBookings) => {
@@ -503,7 +510,7 @@ function LoanPageContent() {
 
                         if (groupedMyBookings.length === 0) {
                             return (
-                                <div className="text-center py-8 text-muted-foreground bg-slate-50 rounded-lg border border-dashed">
+                                <div className="text-center py-8 text-slate-500 bg-white rounded-2xl border border-slate-200 shadow-sm">
                                     Belum ada riwayat peminjaman.
                                 </div>
                             )
@@ -512,18 +519,18 @@ function LoanPageContent() {
                         return (
                             <div className="grid gap-4">
                                 {groupedMyBookings.map((group, idx) => (
-                                    <Card key={`${group.ids[0]}-${idx}`}>
+                                    <Card key={`${group.ids[0]}-${idx}`} className="bg-white border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                                         <CardHeader className="pb-2">
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <CardTitle className="text-base">{group.room}</CardTitle>
-                                                    <div className="text-sm text-muted-foreground">
+                                                    <CardTitle className="text-base text-slate-800">{group.room}</CardTitle>
+                                                    <div className="text-sm text-slate-500">
                                                         {group.date} | {group.startTime} - {group.endTime}
                                                     </div>
                                                 </div>
-                                                <div className={`text-xs px-2 py-1 rounded-full font-medium ${group.status === "Menunggu" ? "bg-yellow-100 text-yellow-800" :
-                                                    group.status === "Disetujui" ? "bg-green-100 text-green-800" :
-                                                        "bg-red-100 text-red-800"
+                                                <div className={`text-xs px-3 py-1 rounded-full font-medium ${group.status === "Menunggu" ? "bg-amber-100 text-amber-800" :
+                                                    group.status === "Disetujui" ? "bg-green-100 text-green-700" :
+                                                        "bg-red-100 text-red-700"
                                                     }`}>
                                                     {group.status}
                                                 </div>
@@ -532,15 +539,16 @@ function LoanPageContent() {
                                         <CardContent>
                                             <div className="grid md:grid-cols-2 gap-4 text-sm">
                                                 <div className="space-y-1">
-                                                    <div><span className="font-medium">Keperluan:</span> {group.details.keperluan}</div>
+                                                    <div><span className="font-medium text-slate-700">Keperluan:</span> <span className="text-slate-600">{group.details.keperluan}</span></div>
                                                 </div>
 
                                                 <div className="flex justify-end items-start gap-2">
                                                     {group.status === "Menunggu" && (
                                                         <Button
-                                                            variant="destructive"
+                                                            variant="outline"
                                                             size="sm"
                                                             onClick={() => handleBulkCancel(group.ids)}
+                                                            className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
                                                         >
                                                             Batalkan Permintaan
                                                         </Button>
@@ -548,7 +556,7 @@ function LoanPageContent() {
 
                                                     {group.status === "Disetujui" && (
                                                         <Button
-                                                            className="bg-blue-600 hover:bg-blue-700 text-white flex gap-2 items-center"
+                                                            className="bg-[#b91c1c] hover:bg-[#991b1b] text-white flex gap-2 items-center"
                                                             size="sm"
                                                             onClick={() => downloadApprovalLetter(group)}
                                                         >
@@ -558,7 +566,7 @@ function LoanPageContent() {
                                                     )}
 
                                                     {group.status === "Ditolak" && group.alasanPenolakan && (
-                                                        <div className="bg-red-50 p-3 rounded-md border border-red-100 text-red-800 text-xs w-full text-left">
+                                                        <div className="bg-red-50 p-3 rounded-xl border border-red-100 text-red-800 text-xs w-full text-left">
                                                             <span className="font-bold block mb-1">Catatan Admin:</span>
                                                             {group.alasanPenolakan}
                                                         </div>
@@ -579,7 +587,7 @@ function LoanPageContent() {
 
 export default function LoanPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div className="p-8 text-center text-slate-500">Loading...</div>}>
             <LoanPageContent />
         </Suspense>
     )
