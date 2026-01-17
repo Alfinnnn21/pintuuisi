@@ -380,22 +380,19 @@ export default function DashboardPage() {
                             <div key={idx} className="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${booking.status === "Disetujui" ? "bg-green-100" :
-                                        booking.status === "Ditolak" ? "bg-red-100" :
-                                            booking.status === "Selesai" ? "bg-blue-100" : "bg-amber-100"
+                                            booking.status === "Ditolak" ? "bg-red-100" : "bg-amber-100"
                                         }`}>
                                         <Building2 className={`w-6 h-6 ${booking.status === "Disetujui" ? "text-green-600" :
-                                            booking.status === "Ditolak" ? "text-red-600" :
-                                                booking.status === "Selesai" ? "text-blue-600" : "text-amber-600"
+                                                booking.status === "Ditolak" ? "text-red-600" : "text-amber-600"
                                             }`} />
                                     </div>
                                     <div>
                                         <p className="font-medium text-slate-800">{booking.room}</p>
-                                        <p className="text-sm text-slate-500">{booking.date} • {booking.startTime} - {booking.endTime}</p>
+                                        <p className="text-sm text-slate-500">{booking.date} • {booking.time}</p>
                                     </div>
                                 </div>
                                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${booking.status === "Disetujui" ? "bg-green-100 text-green-700" :
-                                    booking.status === "Ditolak" ? "bg-red-100 text-red-700" :
-                                        booking.status === "Selesai" ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700"
+                                        booking.status === "Ditolak" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
                                     }`}>
                                     {booking.status}
                                 </span>
