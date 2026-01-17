@@ -205,7 +205,7 @@ export function BookingGrid() {
                         onClick={handleBookingTrigger}
                     >
                         <span className="md:hidden">+</span>
-                        <span className="hidden md:inline">Pesan Ruangan ({selectedSlots.length})</span>
+                        <span className="hidden md:inline">Pesan Fasilitas ({selectedSlots.length})</span>
                     </Button>
                 </div>
             )}
@@ -235,7 +235,7 @@ export function BookingGrid() {
                         <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                             <tr>
                                 <th className="px-4 py-3 font-medium sticky left-0 bg-slate-50 z-10 w-32 min-w-[120px] md:w-64 md:min-w-[200px]">
-                                    Ruangan
+                                    Fasilitas
                                 </th>
                                 {OPERATIONAL_HOURS.map(hour => (
                                     <th key={hour} className="px-4 py-3 font-medium text-center min-w-[80px]">

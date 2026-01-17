@@ -46,7 +46,7 @@ export default function LoginPage() {
                     <div className="text-center mb-8">
                         <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3 drop-shadow-md">Selamat Datang</h2>
                         <div className="w-24 h-1 bg-gradient-to-r from-transparent via-white/60 to-transparent mx-auto mb-4" />
-                        <p className="text-white/80 text-base">Login untuk Peminjaman Ruangan UISI</p>
+                        <p className="text-white/80 text-base">Login untuk Peminjaman Fasilitas UISI</p>
                     </div>
 
                     {/* Login Form */}
