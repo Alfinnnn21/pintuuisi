@@ -243,17 +243,17 @@ export function BookingGrid() {
 
             <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left">
+                    <table className="w-full text-sm text-left border-collapse">
                         <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                             <tr>
-                                <th className="px-4 py-3 font-medium sticky left-0 bg-slate-50 z-10 w-32 min-w-[120px] md:w-64 md:min-w-[200px]">
+                                <th className="px-4 py-3 font-medium sticky left-0 bg-slate-50 z-30 w-40 min-w-[160px] max-w-[160px] md:w-64 md:min-w-[250px] md:max-w-none shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)] border-r border-slate-200">
                                     <div className="flex items-center gap-1">
                                         Fasilitas
                                         <Info className="w-3 h-3 text-slate-400" />
                                     </div>
                                 </th>
                                 {OPERATIONAL_HOURS.map(hour => (
-                                    <th key={hour} className="px-4 py-3 font-medium text-center min-w-[80px]">
+                                    <th key={hour} className="px-4 py-3 font-medium text-center min-w-[100px] whitespace-nowrap">
                                         {hour}
                                     </th>
                                 ))}
@@ -262,14 +262,14 @@ export function BookingGrid() {
                         <tbody className="divide-y divide-slate-200">
                             {ROOM_LIST.map(room => (
                                 <tr key={room} className="hover:bg-slate-50/50">
-                                    <td className="px-4 py-3 font-medium text-slate-800 sticky left-0 bg-white z-10 border-r border-slate-200 group relative">
-                                        <div className="flex items-center justify-between">
-                                            <span className="truncate" title={room}>{room}</span>
-                                            <Info className="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <td className="px-4 py-3 font-medium text-slate-800 sticky left-0 bg-white z-20 border-r border-slate-200 group relative w-40 min-w-[160px] max-w-[160px] md:w-64 md:min-w-[250px] md:max-w-none shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)]">
+                                        <div className="flex items-center justify-between w-full gap-2">
+                                            <span className="truncate block w-full" title={room}>{room}</span>
+                                            <Info className="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                                         </div>
 
                                         {/* Hover Tooltip Card */}
-                                        <div className="absolute left-full top-0 ml-2 z-50 w-64 bg-slate-800 text-white text-xs rounded-xl p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none translate-x-2 group-hover:translate-x-0">
+                                        <div className="absolute left-full top-0 ml-2 z-50 w-64 bg-slate-800 text-white text-xs rounded-xl p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none translate-x-2 group-hover:translate-x-0 hidden md:block">
                                             <div className="font-bold mb-1 border-b border-white/20 pb-1 text-white">{room}</div>
                                             <div className="space-y-1">
                                                 <div className="flex justify-between">
@@ -295,15 +295,15 @@ export function BookingGrid() {
                                         const isPast = isPastDate()
 
                                         let cellClass = isPast
-                                            ? "bg-slate-100 cursor-not-allowed"
+                                            ? "bg-slate-50 cursor-not-allowed"
                                             : "bg-white hover:bg-slate-50 cursor-pointer"
                                         let cellContent = null
 
                                         if (booking) {
                                             if (booking.status === "Menunggu") {
-                                                cellClass = "bg-amber-100 hover:bg-amber-200 cursor-not-allowed"
+                                                cellClass = "bg-amber-100/50 hover:bg-amber-100 cursor-not-allowed"
                                             } else if (booking.status === "Disetujui") {
-                                                cellClass = "bg-[#b91c1c]/20 hover:bg-[#b91c1c]/30 cursor-not-allowed"
+                                                cellClass = "bg-[#b91c1c]/10 hover:bg-[#b91c1c]/20 cursor-not-allowed"
                                             }
                                             cellContent = (
                                                 <div className="text-xs font-medium truncate max-w-[80px] mx-auto text-slate-700" title={booking.user}>
@@ -311,13 +311,13 @@ export function BookingGrid() {
                                                 </div>
                                             )
                                         } else if (isSelected) {
-                                            cellClass = "bg-blue-100 hover:bg-blue-200 cursor-pointer border-blue-300"
+                                            cellClass = "bg-blue-100 hover:bg-blue-200 cursor-pointer text-blue-700"
                                         }
 
                                         return (
                                             <td
                                                 key={`${room}-${hour}`}
-                                                className={cn("px-2 py-2 border-r border-slate-100 last:border-r-0 transition-colors text-center", cellClass)}
+                                                className={cn("px-2 py-2 border-r border-slate-100 last:border-r-0 transition-colors text-center min-w-[100px] h-[50px]", cellClass)}
                                                 onClick={() => !booking && !isPast && toggleSlotSelection(room, hour)}
                                             >
                                                 {cellContent}
