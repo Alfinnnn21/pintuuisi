@@ -8,12 +8,14 @@ import { BookingModal } from "./BookingModal"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, Calendar, Info } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 export function BookingGrid() {
     const { bookings, addBooking } = useBooking()
     const { user } = useAuth()
     const [selectedSlots, setSelectedSlots] = useState<{ room: string, time: string }[]>([])
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [selectedFacilityDetail, setSelectedFacilityDetail] = useState<string | null>(null)
 
     // Date navigation state
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
@@ -263,7 +265,10 @@ export function BookingGrid() {
                             {ROOM_LIST.map(room => (
                                 <tr key={room} className="hover:bg-slate-50/50">
                                     <td className="px-4 py-3 font-medium text-slate-800 md:sticky md:left-0 bg-white md:z-20 border-r border-slate-200 group relative min-w-[160px] md:w-64 md:min-w-[250px] md:shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)] w-40 max-w-[160px] md:max-w-none">
-                                        <div className="flex items-center justify-between w-full gap-2">
+                                        <div
+                                            className="flex items-center justify-between w-full gap-2 cursor-pointer"
+                                            onClick={() => setSelectedFacilityDetail(room)}
+                                        >
                                             <span className="truncate block w-full" title={room}>{room}</span>
                                             <Info className="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                                         </div>
@@ -338,6 +343,33 @@ export function BookingGrid() {
                 selectedSlots={selectedSlots}
                 selectedDate={formatDisplayDate(selectedDate)}
             />
+
+            <Dialog open={!!selectedFacilityDetail} onOpenChange={(open) => !open && setSelectedFacilityDetail(null)}>
+                <DialogContent className="sm:max-w-[425px] w-[90%] rounded-xl">
+                    <DialogHeader>
+                        <DialogTitle className="text-left">{selectedFacilityDetail}</DialogTitle>
+                    </DialogHeader>
+                    {selectedFacilityDetail && (
+                        <div className="space-y-4 py-2">
+                            <div className="space-y-1">
+                                <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Kapasitas</h4>
+                                <p className="text-slate-900 font-medium">{getRoomDetails(selectedFacilityDetail).capacity}</p>
+                            </div>
+                            <div className="space-y-2">
+                                <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Fasilitas Tersedia</h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {getRoomDetails(selectedFacilityDetail).facilities.map(f => (
+                                        <div key={f} className="bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100 text-sm text-slate-700 flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-[#b91c1c]"></div>
+                                            {f}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }
