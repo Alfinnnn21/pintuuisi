@@ -398,7 +398,7 @@ export default function DashboardPage() {
                         </Link>
                     </div>
                     <div className="divide-y divide-slate-100">
-                        {bookings.filter(b => user?.role === "admin" || b.user === user?.username).slice(0, 5).map((booking, idx) => (
+                        {bookings.slice(0, 5).map((booking, idx) => (
                             <div key={idx} className="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between">
                                 <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
                                     <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${booking.status === "Disetujui" ? "bg-green-100" :
@@ -411,11 +411,19 @@ export default function DashboardPage() {
                                     <div className="min-w-0 flex-1">
                                         <p className="font-medium text-slate-800 truncate text-sm md:text-base">{booking.room}</p>
                                         <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2 mt-0.5">
-                                            <span className="text-xs font-medium text-slate-600 flex items-center gap-1 truncate">
-                                                <Users className="w-3 h-3 text-slate-400" /> {booking.user}
-                                            </span>
-                                            <span className="hidden sm:inline text-slate-300 text-xs">•</span>
-                                            <span className="text-xs text-slate-400 truncate">{booking.date} • {booking.time}</span>
+                                            <div className="flex items-center gap-1 min-w-0">
+                                                <span className="text-xs font-medium text-slate-600 flex items-center gap-1 truncate">
+                                                    <Users className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                                                    {booking.user}
+                                                </span>
+                                                {booking.organisasi && (
+                                                    <span className="text-xs text-slate-500 truncate border-l border-slate-300 pl-1 ml-0.5">
+                                                        {booking.organisasi}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <span className="hidden sm:inline text-slate-300 text-xs flex-shrink-0">•</span>
+                                            <span className="text-xs text-slate-400 truncate flex-shrink-0">{booking.date} • {booking.time}</span>
                                         </div>
                                     </div>
                                 </div>
