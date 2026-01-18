@@ -115,7 +115,9 @@ export default function LoginPage() {
                     <div className="mt-8 p-4 bg-black/20 backdrop-blur rounded-xl border border-white/20">
                         <p className="font-semibold text-white/90 text-sm mb-2">Demo Credentials:</p>
                         <ul className="space-y-1 text-sm text-white/70">
-                            <li>• User: <code className="bg-white/20 px-2 py-0.5 rounded">mahasiswa1@gmail.com</code> | <code className="bg-white/20 px-2 py-0.5 rounded">mahasiswa1</code></li>
+                            <li>• User 1: <code className="bg-white/20 px-2 py-0.5 rounded">mahasiswa1@gmail.com</code> | <code className="bg-white/20 px-2 py-0.5 rounded">mahasiswa1</code></li>
+                            <li>• User 2: <code className="bg-white/20 px-2 py-0.5 rounded">mahasiswa2@gmail.com</code> | <code className="bg-white/20 px-2 py-0.5 rounded">mahasiswa2</code></li>
+                            <li>• User 3: <code className="bg-white/20 px-2 py-0.5 rounded">mahasiswa3@gmail.com</code> | <code className="bg-white/20 px-2 py-0.5 rounded">mahasiswa3</code></li>
                             <li>• Admin: <code className="bg-white/20 px-2 py-0.5 rounded">admin@gmail.com</code> | <code className="bg-white/20 px-2 py-0.5 rounded">admin</code></li>
                         </ul>
                     </div>
