@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { PlusCircle, History, ArrowRight, LogOut, Calendar, ClipboardCheck, LayoutDashboard, Clock, Building2, Users, FileText, ChevronRight, Bell } from "lucide-react"
+import { PlusCircle, History, ArrowRight, LogOut, Calendar, ClipboardCheck, LayoutDashboard, Clock, Building2, Users, FileText, ChevronRight, Bell, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/AuthContext"
 import { useBooking } from "@/context/BookingContext"
@@ -286,100 +286,114 @@ export default function DashboardPage() {
                         <Clock className="w-5 h-5 text-[#b91c1c]" />
                         AKSES CEPAT
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
                         {user?.role === "admin" ? (
                             <>
-                                {/* Admin Quick Access Cards */}
+                                {/* Admin Quick Access Cards - Adjusted to 4 col for now or keep standard? Admin has 4 cards. Let's keep admin as is or similar style? 
+                                   User said "Quick Access" generally. Admin has 4 cards currently. 
+                                   Let's update Admin to use grid-cols-2 lg:grid-cols-4 for 4 items, but maybe user wants 5th item for admin too? 
+                                   User request implies "di akses cepat ini", and context is likely Student view due to "Ditolak". 
+                                   Admin doesn't have "Menunggu", "Disetujui" counters usually in cards like User. 
+                                   Wait, Admin DOES have "Total Pengajuan".
+                                   Let's focus on Student View mostly as requested "Ditolak" card fits student context better (user wants to see rejected status).
+                                   */}
                                 <Link href="/dashboard?view=jadwal" className="group">
-                                    <div className="bg-white rounded-2xl p-5 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="p-2 bg-[#b91c1c] rounded-xl">
-                                                <Calendar className="w-6 h-6 text-white" />
+                                    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-slate-100 h-full">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className="p-1.5 bg-[#b91c1c] rounded-lg">
+                                                <Calendar className="w-5 h-5 text-white" />
                                             </div>
                                         </div>
-                                        <h3 className="font-semibold text-lg text-slate-800">Jadwal Ruangan</h3>
-                                        <p className="text-slate-500 text-sm mt-1">Lihat ketersediaan ruangan</p>
+                                        <h3 className="font-semibold text-sm md:text-base text-slate-800">Jadwal</h3>
+                                        <p className="text-slate-500 text-xs mt-0.5">Cek ketersediaan</p>
                                     </div>
                                 </Link>
                                 <Link href="/dashboard?view=approval" className="group">
-                                    <div className="bg-white rounded-2xl p-5 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="p-2 bg-[#dc6b6b] rounded-xl">
-                                                <ClipboardCheck className="w-6 h-6 text-white" />
+                                    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-slate-100 h-full">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className="p-1.5 bg-[#dc6b6b] rounded-lg">
+                                                <ClipboardCheck className="w-5 h-5 text-white" />
                                             </div>
                                         </div>
-                                        <h3 className="font-semibold text-lg text-slate-800">Persetujuan</h3>
-                                        <p className="text-slate-500 text-sm mt-1">Konfirmasi pengajuan baru</p>
+                                        <h3 className="font-semibold text-sm md:text-base text-slate-800">Persetujuan</h3>
+                                        <p className="text-slate-500 text-xs mt-0.5">Konfirmasi baru</p>
                                     </div>
                                 </Link>
                                 <Link href="/admin/history" className="group">
-                                    <div className="bg-white rounded-2xl p-5 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="p-2 bg-[#f59e0b] rounded-xl">
-                                                <History className="w-6 h-6 text-white" />
+                                    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-slate-100 h-full">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className="p-1.5 bg-[#f59e0b] rounded-lg">
+                                                <History className="w-5 h-5 text-white" />
                                             </div>
                                         </div>
-                                        <h3 className="font-semibold text-lg text-slate-800">Riwayat</h3>
-                                        <p className="text-slate-500 text-sm mt-1">Arsip peminjaman</p>
+                                        <h3 className="font-semibold text-sm md:text-base text-slate-800">Riwayat</h3>
+                                        <p className="text-slate-500 text-xs mt-0.5">Arsip data</p>
                                     </div>
                                 </Link>
-                                <div className="bg-white rounded-2xl p-5 shadow-md border border-slate-100">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className="p-2 bg-slate-100 rounded-xl">
-                                            <Users className="w-6 h-6 text-slate-600" />
+                                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 h-full">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="p-1.5 bg-slate-100 rounded-lg">
+                                            <Users className="w-5 h-5 text-slate-600" />
                                         </div>
                                     </div>
-                                    <h3 className="font-semibold text-lg text-slate-800">Total Pengajuan</h3>
-                                    <p className="text-3xl font-bold text-[#b91c1c] mt-2">{bookings.length}</p>
+                                    <h3 className="font-semibold text-sm md:text-base text-slate-800">Total</h3>
+                                    <p className="text-2xl font-bold text-[#b91c1c] mt-1">{bookings.length}</p>
                                 </div>
                             </>
                         ) : (
                             <>
-                                {/* Student Quick Access Cards */}
-                                <Link href="/loan/new" className="group">
-                                    <div className="bg-white rounded-2xl p-5 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="p-2 bg-[#b91c1c] rounded-xl">
-                                                <PlusCircle className="w-6 h-6 text-white" />
+                                {/* Student Quick Access Cards - 5 Items */}
+                                <Link href="/loan/new" className="group col-span-2 md:col-span-1">
+                                    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-slate-100 h-full relative overflow-hidden">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className="p-1.5 bg-[#b91c1c] rounded-lg">
+                                                <PlusCircle className="w-5 h-5 text-white" />
                                             </div>
                                         </div>
-                                        <h3 className="font-semibold text-lg text-slate-800">Peminjaman Baru</h3>
-                                        <p className="text-slate-500 text-sm mt-1">Ajukan peminjaman ruangan</p>
+                                        <h3 className="font-semibold text-sm md:text-base text-slate-800">Buat Baru</h3>
+                                        <p className="text-slate-500 text-xs mt-0.5">Ajukan peminjaman</p>
                                     </div>
                                 </Link>
                                 <Link href="/loan/new?tab=history" onClick={markAllAsSeen} className="group">
-                                    <div className="bg-white rounded-2xl p-5 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100 relative">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="p-2 bg-[#dc6b6b] rounded-xl">
-                                                <History className="w-6 h-6 text-white" />
+                                    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-slate-100 relative h-full">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className="p-1.5 bg-slate-500 rounded-lg">
+                                                <History className="w-5 h-5 text-white" />
                                             </div>
-                                            {unseenApprovedCount > 0 && (
-                                                <span className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                                    +{unseenApprovedCount} Disetujui
-                                                </span>
+                                            {(unseenApprovedCount > 0 || unseenRejectedCount > 0) && (
+                                                <span className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                                             )}
                                         </div>
-                                        <h3 className="font-semibold text-lg text-slate-800">Riwayat Saya</h3>
-                                        <p className="text-slate-500 text-sm mt-1">Lihat status peminjaman</p>
+                                        <h3 className="font-semibold text-sm md:text-base text-slate-800">Riwayat</h3>
+                                        <p className="text-slate-500 text-xs mt-0.5">Status saya</p>
                                     </div>
                                 </Link>
-                                <div className="bg-white rounded-2xl p-5 shadow-md border border-slate-100 relative">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className="p-2 bg-[#f59e0b] rounded-xl">
-                                            <Clock className="w-6 h-6 text-white" />
+                                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 h-full">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="p-1.5 bg-[#f59e0b] rounded-lg">
+                                            <Clock className="w-5 h-5 text-white" />
                                         </div>
                                     </div>
-                                    <h3 className="font-semibold text-lg text-slate-800">Menunggu</h3>
-                                    <p className="text-3xl font-bold text-[#f59e0b] mt-2">{pendingBookings.length}</p>
+                                    <h3 className="font-semibold text-sm md:text-base text-slate-800">Menunggu</h3>
+                                    <p className="text-2xl font-bold text-[#f59e0b] mt-1">{pendingBookings.length}</p>
                                 </div>
-                                <div className="bg-white rounded-2xl p-5 shadow-md border border-slate-100">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <div className="p-2 bg-green-500 rounded-xl">
-                                            <FileText className="w-6 h-6 text-white" />
+                                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 h-full">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="p-1.5 bg-green-500 rounded-lg">
+                                            <FileText className="w-5 h-5 text-white" />
                                         </div>
                                     </div>
-                                    <h3 className="font-semibold text-lg text-slate-800">Disetujui</h3>
-                                    <p className="text-3xl font-bold text-green-600 mt-2">{approvedBookings.length}</p>
+                                    <h3 className="font-semibold text-sm md:text-base text-slate-800">Disetujui</h3>
+                                    <p className="text-2xl font-bold text-green-600 mt-1">{approvedBookings.length}</p>
+                                </div>
+                                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 h-full">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="p-1.5 bg-red-500 rounded-lg">
+                                            <X className="w-5 h-5 text-white" />
+                                        </div>
+                                    </div>
+                                    <h3 className="font-semibold text-sm md:text-base text-slate-800">Ditolak</h3>
+                                    <p className="text-2xl font-bold text-red-600 mt-1">{rejectedBookings.length}</p>
                                 </div>
                             </>
                         )}
