@@ -286,17 +286,10 @@ export default function DashboardPage() {
                         <Clock className="w-5 h-5 text-[#b91c1c]" />
                         AKSES CEPAT
                     </h2>
-                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
+                    <div className={`grid gap-3 md:gap-4 ${user?.role === "admin" ? "grid-cols-2 lg:grid-cols-4" : "grid-cols-3 md:grid-cols-3 lg:grid-cols-5"}`}>
                         {user?.role === "admin" ? (
                             <>
-                                {/* Admin Quick Access Cards - Adjusted to 4 col for now or keep standard? Admin has 4 cards. Let's keep admin as is or similar style? 
-                                   User said "Quick Access" generally. Admin has 4 cards currently. 
-                                   Let's update Admin to use grid-cols-2 lg:grid-cols-4 for 4 items, but maybe user wants 5th item for admin too? 
-                                   User request implies "di akses cepat ini", and context is likely Student view due to "Ditolak". 
-                                   Admin doesn't have "Menunggu", "Disetujui" counters usually in cards like User. 
-                                   Wait, Admin DOES have "Total Pengajuan".
-                                   Let's focus on Student View mostly as requested "Ditolak" card fits student context better (user wants to see rejected status).
-                                   */}
+                                {/* Admin Quick Access Cards */}
                                 <Link href="/dashboard?view=jadwal" className="group">
                                     <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-slate-100 h-full">
                                         <div className="flex items-center gap-2 mb-2">
@@ -342,8 +335,8 @@ export default function DashboardPage() {
                             </>
                         ) : (
                             <>
-                                {/* Student Quick Access Cards - 5 Items */}
-                                <Link href="/loan/new" className="group col-span-2 md:col-span-1">
+                                {/* Student Quick Access Cards - Custom Mobile Layout */}
+                                <Link href="/loan/new" className="group col-span-3 md:col-span-1">
                                     <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-slate-100 h-full relative overflow-hidden">
                                         <div className="flex items-center gap-2 mb-2">
                                             <div className="p-1.5 bg-[#b91c1c] rounded-lg">
@@ -354,7 +347,7 @@ export default function DashboardPage() {
                                         <p className="text-slate-500 text-xs mt-0.5">Ajukan peminjaman</p>
                                     </div>
                                 </Link>
-                                <Link href="/loan/new?tab=history" onClick={markAllAsSeen} className="group">
+                                <Link href="/loan/new?tab=history" onClick={markAllAsSeen} className="group col-span-3 md:col-span-1">
                                     <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-slate-100 relative h-full">
                                         <div className="flex items-center gap-2 mb-2">
                                             <div className="p-1.5 bg-slate-500 rounded-lg">
@@ -375,7 +368,7 @@ export default function DashboardPage() {
                                         </div>
                                     </div>
                                     <h3 className="font-semibold text-sm md:text-base text-slate-800">Menunggu</h3>
-                                    <p className="text-2xl font-bold text-[#f59e0b] mt-1">{pendingBookings.length}</p>
+                                    <p className="text-xl md:text-2xl font-bold text-[#f59e0b] mt-1">{pendingBookings.length}</p>
                                 </div>
                                 <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 h-full">
                                     <div className="flex items-center gap-2 mb-2">
@@ -384,7 +377,7 @@ export default function DashboardPage() {
                                         </div>
                                     </div>
                                     <h3 className="font-semibold text-sm md:text-base text-slate-800">Disetujui</h3>
-                                    <p className="text-2xl font-bold text-green-600 mt-1">{approvedBookings.length}</p>
+                                    <p className="text-xl md:text-2xl font-bold text-green-600 mt-1">{approvedBookings.length}</p>
                                 </div>
                                 <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 h-full">
                                     <div className="flex items-center gap-2 mb-2">
@@ -393,7 +386,7 @@ export default function DashboardPage() {
                                         </div>
                                     </div>
                                     <h3 className="font-semibold text-sm md:text-base text-slate-800">Ditolak</h3>
-                                    <p className="text-2xl font-bold text-red-600 mt-1">{rejectedBookings.length}</p>
+                                    <p className="text-xl md:text-2xl font-bold text-red-600 mt-1">{rejectedBookings.length}</p>
                                 </div>
                             </>
                         )}
