@@ -90,7 +90,7 @@ export default function DashboardPage() {
         return (
             <div className="flex min-h-[calc(100vh-80px)]">
                 {/* Sidebar - White */}
-                <div className="w-72 bg-white border-r border-slate-200 rounded-2xl m-4 p-6 flex flex-col shadow-lg">
+                <div className="hidden md:flex w-72 bg-white border-r border-slate-200 rounded-2xl m-4 p-6 flex-col shadow-lg">
                     {/* New Request Button - RED */}
                     <button className="w-full bg-[#b91c1c] hover:bg-[#991b1b] text-white rounded-full py-3 px-6 flex items-center justify-center gap-2 font-medium transition-all mb-8 shadow-md hover:shadow-lg">
                         <PlusCircle className="w-5 h-5" />
