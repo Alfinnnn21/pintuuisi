@@ -237,25 +237,44 @@ export default function DashboardPage() {
 
             {/* Main Content */}
             <div className="flex-1 p-6 bg-slate-50">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h1 className="text-3xl font-bold text-slate-800 flex items-center gap-3">
-                            Selamat Datang
-                            <span className="inline-block w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                        </h1>
-                        <p className="text-slate-500 mt-1">Hi, <span className="font-semibold text-slate-700">{user?.username}</span> • {user?.role === "admin" ? "Administrator" : "Mahasiswa"}</p>
+                {/* Visual Welcome Banner */}
+                <div className="bg-gradient-to-r from-[#b91c1c] to-[#ea580c] rounded-2xl p-6 md:p-10 text-white mb-8 shadow-lg relative overflow-hidden">
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div>
+                            <h1 className="text-3xl md:text-4xl font-bold flex items-center gap-3 mb-2 animate-in slide-in-from-left duration-500">
+                                Selamat Datang, {user?.username}! <span className="animate-bounce">👋</span>
+                            </h1>
+                            <p className="text-white/90 text-lg animate-in slide-in-from-left duration-500 delay-100">
+                                {user?.role === "admin"
+                                    ? "Kelola peminjaman fasilitas dan jadwal kegiatan kampus."
+                                    : "Siap untuk kegiatan produktif hari ini? Cek jadwal dan ajukan peminjaman."}
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-4 animate-in fade-in duration-700 delay-200">
+                            <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 min-w-[140px]">
+                                <p className="text-xs font-medium text-white/70 uppercase tracking-wider mb-1">Peran Akses</p>
+                                <div className="flex items-center gap-2">
+                                    {user?.role === "admin" ? <ClipboardCheck className="w-5 h-5" /> : <Users className="w-5 h-5" />}
+                                    <span className="font-bold text-lg">{user?.role === "admin" ? "Administrator" : "Mahasiswa"}</span>
+                                </div>
+                            </div>
+
+                            <button className="relative p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 hover:bg-white/20 transition-all group">
+                                <Bell className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                                {(unseenApprovedCount > 0 || unseenRejectedCount > 0) && (
+                                    <span className="absolute top-3 right-3 w-3 h-3 bg-red-400 border-2 border-[#b91c1c] rounded-full animate-ping" />
+                                )}
+                                {(unseenApprovedCount > 0 || unseenRejectedCount > 0) && (
+                                    <span className="absolute top-3 right-3 w-3 h-3 bg-red-400 border-2 border-[#b91c1c] rounded-full" />
+                                )}
+                            </button>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <button className="relative p-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all border border-slate-100">
-                            <Bell className="w-5 h-5 text-slate-600" />
-                            {(unseenApprovedCount > 0 || unseenRejectedCount > 0) && (
-                                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#b91c1c] text-white text-xs rounded-full flex items-center justify-center font-medium">
-                                    {unseenApprovedCount + unseenRejectedCount}
-                                </span>
-                            )}
-                        </button>
-                    </div>
+
+                    {/* Decorative Elements */}
+                    <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-black/10 rounded-full blur-2xl pointer-events-none"></div>
                 </div>
 
                 {/* Quick Access Section */}
@@ -380,10 +399,10 @@ export default function DashboardPage() {
                             <div key={idx} className="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${booking.status === "Disetujui" ? "bg-green-100" :
-                                            booking.status === "Ditolak" ? "bg-red-100" : "bg-amber-100"
+                                        booking.status === "Ditolak" ? "bg-red-100" : "bg-amber-100"
                                         }`}>
                                         <Building2 className={`w-6 h-6 ${booking.status === "Disetujui" ? "text-green-600" :
-                                                booking.status === "Ditolak" ? "text-red-600" : "text-amber-600"
+                                            booking.status === "Ditolak" ? "text-red-600" : "text-amber-600"
                                             }`} />
                                     </div>
                                     <div>
@@ -392,7 +411,7 @@ export default function DashboardPage() {
                                     </div>
                                 </div>
                                 <span className={`px-3 py-1 rounded-full text-xs font-medium ${booking.status === "Disetujui" ? "bg-green-100 text-green-700" :
-                                        booking.status === "Ditolak" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
+                                    booking.status === "Ditolak" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
                                     }`}>
                                     {booking.status}
                                 </span>

@@ -7,7 +7,7 @@ import { ROOM_LIST, OPERATIONAL_HOURS } from "@/lib/constants"
 import { BookingModal } from "./BookingModal"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
+import { ChevronLeft, ChevronRight, Calendar, Info } from "lucide-react"
 
 export function BookingGrid() {
     const { bookings, addBooking } = useBooking()
@@ -101,7 +101,7 @@ export function BookingGrid() {
 
     const handleBookingTrigger = () => {
         if (selectedSlots.length === 0) {
-            alert("Pilih ruangan dan waktu terlebih dahulu")
+            alert("Pilih fasilitas dan waktu terlebih dahulu")
             return
         }
         setIsModalOpen(true)
@@ -132,6 +132,18 @@ export function BookingGrid() {
             addBooking(newBookings)
             setSelectedSlots([]) // Clear selection after booking
         }
+    }
+
+    // Helper to get room details (mock data based on name)
+    const getRoomDetails = (name: string) => {
+        let det = { capacity: "30-40 Orang", facilities: ["AC", "Proyektor", "Whiteboard"] }
+
+        if (name.includes("LAB")) det = { capacity: "20-30 Orang", facilities: ["AC", "PC Workstation", "Proyektor"] }
+        else if (name.includes("AUDITORIUM")) det = { capacity: "150+ Orang", facilities: ["AC Central", "Sound System", "Videotron"] }
+        else if (name.includes("HALAMAN") || name.includes("LOBBY")) det = { capacity: "Area Terbuka", facilities: ["Listrik (Terbatas)", "Area Luas"] }
+        else if (name.includes("TRANSPORTASI")) det = { capacity: "Sesuai Kendaraan", facilities: ["Driver", "BBM", "AC"] }
+
+        return det
     }
 
     return (
@@ -235,7 +247,10 @@ export function BookingGrid() {
                         <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                             <tr>
                                 <th className="px-4 py-3 font-medium sticky left-0 bg-slate-50 z-10 w-32 min-w-[120px] md:w-64 md:min-w-[200px]">
-                                    Fasilitas
+                                    <div className="flex items-center gap-1">
+                                        Fasilitas
+                                        <Info className="w-3 h-3 text-slate-400" />
+                                    </div>
                                 </th>
                                 {OPERATIONAL_HOURS.map(hour => (
                                     <th key={hour} className="px-4 py-3 font-medium text-center min-w-[80px]">
@@ -247,8 +262,32 @@ export function BookingGrid() {
                         <tbody className="divide-y divide-slate-200">
                             {ROOM_LIST.map(room => (
                                 <tr key={room} className="hover:bg-slate-50/50">
-                                    <td className="px-4 py-3 font-medium text-slate-800 sticky left-0 bg-white z-10 border-r border-slate-200">
-                                        {room}
+                                    <td className="px-4 py-3 font-medium text-slate-800 sticky left-0 bg-white z-10 border-r border-slate-200 group relative">
+                                        <div className="flex items-center justify-between">
+                                            <span className="truncate" title={room}>{room}</span>
+                                            <Info className="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        </div>
+
+                                        {/* Hover Tooltip Card */}
+                                        <div className="absolute left-full top-0 ml-2 z-50 w-64 bg-slate-800 text-white text-xs rounded-xl p-3 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none translate-x-2 group-hover:translate-x-0">
+                                            <div className="font-bold mb-1 border-b border-white/20 pb-1 text-white">{room}</div>
+                                            <div className="space-y-1">
+                                                <div className="flex justify-between">
+                                                    <span className="text-slate-400">Kapasitas:</span>
+                                                    <span>{getRoomDetails(room).capacity}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="text-slate-400 block mb-0.5">Fasilitas:</span>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {getRoomDetails(room).facilities.map(f => (
+                                                            <span key={f} className="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">{f}</span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* Arrow */}
+                                            <div className="absolute top-4 -left-1 w-2 h-2 bg-slate-800 rotate-45"></div>
+                                        </div>
                                     </td>
                                     {OPERATIONAL_HOURS.map(hour => {
                                         const booking = getBooking(room, hour)
