@@ -140,7 +140,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Main Content */}
-                <div className="flex-1 p-6 bg-slate-50">
+                <div className="flex-1 p-4 md:p-6 bg-slate-50">
                     <div className="flex items-center justify-between mb-6">
                         <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
                             {activeTab === "jadwal" && <><Calendar className="w-7 h-7 text-[#b91c1c]" /> Jadwal Ruangan</>}
@@ -158,7 +158,7 @@ export default function DashboardPage() {
     return (
         <div className="flex min-h-[calc(100vh-80px)]">
             {/* Sidebar - White */}
-            <div className="w-72 bg-white border-r border-slate-200 rounded-2xl m-4 p-6 flex flex-col shadow-lg">
+            <div className="hidden md:flex w-72 bg-white border-r border-slate-200 rounded-2xl m-4 p-6 flex-col shadow-lg">
                 {/* New Request Button - RED */}
                 <Link href={user?.role === "admin" ? "#" : "/loan/new"}>
                     <button className="w-full bg-[#b91c1c] hover:bg-[#991b1b] text-white rounded-full py-3 px-6 flex items-center justify-center gap-2 font-medium transition-all mb-8 shadow-md hover:shadow-lg">
@@ -236,7 +236,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 p-6 bg-slate-50">
+            <div className="flex-1 p-4 md:p-6 bg-slate-50">
                 {/* Visual Welcome Banner */}
                 <div className="bg-gradient-to-r from-[#b91c1c] to-[#ea580c] rounded-2xl p-6 md:p-10 text-white mb-8 shadow-lg relative overflow-hidden">
                     <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
