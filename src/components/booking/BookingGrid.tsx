@@ -109,6 +109,7 @@ export function BookingGrid() {
         setIsModalOpen(true)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleBookingSubmit = (data: any) => {
         if (user && selectedSlots.length > 0) {
             // Sort slots to ensure we identify the first/earliest one correctly

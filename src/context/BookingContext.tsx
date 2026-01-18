@@ -45,6 +45,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (data) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const formattedBookings: Booking[] = data.map((item: any) => {
                 const dateObj = new Date(item.waktu_mulai)
                 const date = dateObj.toISOString().split('T')[0]
@@ -72,6 +73,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     }
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         fetchBookings()
 
         const channel = supabase

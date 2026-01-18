@@ -27,6 +27,7 @@ type Step = "selection" | "form"
 export function BookingModal({ isOpen, onClose, onSubmit, selectedSlots, selectedDate }: {
     isOpen: boolean,
     onClose: () => void,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onSubmit: (data: any) => void,
     selectedSlots: { room: string, time: string }[],
     selectedDate?: string

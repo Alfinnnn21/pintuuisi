@@ -21,6 +21,7 @@ export function AdminPanel() {
         const groups: Record<string, {
             ids: string[],
             times: string[],
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             details: any,
             user: string,
             date: string,
@@ -69,6 +70,7 @@ export function AdminPanel() {
 
     const groupedBookings = groupBookings(pendingBookings)
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const safeRenderAlat = (alat: any) => {
         if (!alat) return '-'
         if (Array.isArray(alat)) return alat.join(', ')

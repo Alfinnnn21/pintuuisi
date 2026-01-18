@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Download, FileText } from "lucide-react"
+import { Download } from "lucide-react"
 
 interface Loan {
     id: string | number
@@ -23,42 +23,40 @@ interface Loan {
 }
 
 export default function LoanStatusPage() {
-    const [myLoans, setMyLoans] = useState<Loan[]>([])
-
-    useEffect(() => {
+    const [myLoans, setMyLoans] = useState<Loan[]>(() => {
         // Load from local storage or use dummy data
-        const storedLoans = JSON.parse(localStorage.getItem("loans") || "[]")
+        if (typeof window !== 'undefined') {
+            const storedLoans = JSON.parse(localStorage.getItem("loans") || "[]")
+            if (storedLoans.length > 0) {
+                return storedLoans
+            }
+        }
 
         // Add some dummy data if empty for demo purposes
-        if (storedLoans.length === 0) {
-            const dummyLoans = [
-                {
-                    id: "dummy-1",
-                    ruangan: "Aula Utama",
-                    tanggalMulai: "2023-12-10",
-                    status: "Disetujui",
-                    date: new Date().toISOString(),
-                },
-                {
-                    id: "dummy-2",
-                    ruangan: "Lab Komputer",
-                    tanggalMulai: "2023-12-12",
-                    status: "Menunggu",
-                    date: new Date().toISOString(),
-                },
-                {
-                    id: "dummy-3",
-                    ruangan: "Ruang Rapat 2",
-                    tanggalMulai: "2023-11-20",
-                    status: "Ditolak",
-                    date: new Date().toISOString(),
-                },
-            ]
-            setMyLoans(dummyLoans)
-        } else {
-            setMyLoans(storedLoans)
-        }
-    }, [])
+        return [
+            {
+                id: "dummy-1",
+                ruangan: "Aula Utama",
+                tanggalMulai: "2023-12-10",
+                status: "Disetujui",
+                date: new Date().toISOString(),
+            },
+            {
+                id: "dummy-2",
+                ruangan: "Lab Komputer",
+                tanggalMulai: "2023-12-12",
+                status: "Menunggu",
+                date: new Date().toISOString(),
+            },
+            {
+                id: "dummy-3",
+                ruangan: "Ruang Rapat 2",
+                tanggalMulai: "2023-11-20",
+                status: "Ditolak",
+                date: new Date().toISOString(),
+            },
+        ]
+    })
 
     const getStatusBadge = (status: string) => {
         switch (status) {
