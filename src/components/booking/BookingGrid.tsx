@@ -246,7 +246,7 @@ export function BookingGrid() {
                     <table className="w-full text-sm text-left border-collapse">
                         <thead className="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
                             <tr>
-                                <th className="px-4 py-3 font-medium sticky left-0 bg-slate-50 z-30 w-40 min-w-[160px] max-w-[160px] md:w-64 md:min-w-[250px] md:max-w-none shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)] border-r border-slate-200">
+                                <th className="px-4 py-3 font-medium md:sticky md:left-0 bg-slate-50 md:z-30 min-w-[160px] md:w-64 md:min-w-[250px] md:shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)] border-r border-slate-200">
                                     <div className="flex items-center gap-1">
                                         Fasilitas
                                         <Info className="w-3 h-3 text-slate-400" />
@@ -262,7 +262,7 @@ export function BookingGrid() {
                         <tbody className="divide-y divide-slate-200">
                             {ROOM_LIST.map(room => (
                                 <tr key={room} className="hover:bg-slate-50/50">
-                                    <td className="px-4 py-3 font-medium text-slate-800 sticky left-0 bg-white z-20 border-r border-slate-200 group relative w-40 min-w-[160px] max-w-[160px] md:w-64 md:min-w-[250px] md:max-w-none shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)]">
+                                    <td className="px-4 py-3 font-medium text-slate-800 md:sticky md:left-0 bg-white md:z-20 border-r border-slate-200 group relative min-w-[160px] md:w-64 md:min-w-[250px] md:shadow-[4px_0_24px_-2px_rgba(0,0,0,0.05)] w-40 max-w-[160px] md:max-w-none">
                                         <div className="flex items-center justify-between w-full gap-2">
                                             <span className="truncate block w-full" title={room}>{room}</span>
                                             <Info className="w-3 h-3 text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
