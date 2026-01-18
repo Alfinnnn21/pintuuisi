@@ -76,13 +76,16 @@ export default function DashboardPage() {
 
     useEffect(() => {
         const view = searchParams.get("view")
+        let tab: string | null = null
+
         if (view === "jadwal") {
-            setActiveTab("jadwal")
+            tab = "jadwal"
         } else if (view === "approval") {
-            setActiveTab("approval")
-        } else {
-            setActiveTab(null)
+            tab = "approval"
         }
+
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setActiveTab(tab)
     }, [searchParams])
 
     // Admin tab views
@@ -397,20 +400,26 @@ export default function DashboardPage() {
                     <div className="divide-y divide-slate-100">
                         {bookings.filter(b => user?.role === "admin" || b.user === user?.username).slice(0, 5).map((booking, idx) => (
                             <div key={idx} className="p-4 hover:bg-slate-50 transition-colors flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${booking.status === "Disetujui" ? "bg-green-100" :
+                                <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
+                                    <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${booking.status === "Disetujui" ? "bg-green-100" :
                                         booking.status === "Ditolak" ? "bg-red-100" : "bg-amber-100"
                                         }`}>
-                                        <Building2 className={`w-6 h-6 ${booking.status === "Disetujui" ? "text-green-600" :
+                                        <Building2 className={`w-5 h-5 md:w-6 md:h-6 ${booking.status === "Disetujui" ? "text-green-600" :
                                             booking.status === "Ditolak" ? "text-red-600" : "text-amber-600"
                                             }`} />
                                     </div>
-                                    <div>
-                                        <p className="font-medium text-slate-800">{booking.room}</p>
-                                        <p className="text-sm text-slate-500">{booking.date} • {booking.time}</p>
+                                    <div className="min-w-0 flex-1">
+                                        <p className="font-medium text-slate-800 truncate text-sm md:text-base">{booking.room}</p>
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2 mt-0.5">
+                                            <span className="text-xs font-medium text-slate-600 flex items-center gap-1 truncate">
+                                                <Users className="w-3 h-3 text-slate-400" /> {booking.user}
+                                            </span>
+                                            <span className="hidden sm:inline text-slate-300 text-xs">•</span>
+                                            <span className="text-xs text-slate-400 truncate">{booking.date} • {booking.time}</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <span className={`px-3 py-1 rounded-full text-xs font-medium ${booking.status === "Disetujui" ? "bg-green-100 text-green-700" :
+                                <span className={`px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-medium ml-2 whitespace-nowrap ${booking.status === "Disetujui" ? "bg-green-100 text-green-700" :
                                     booking.status === "Ditolak" ? "bg-red-100 text-red-700" : "bg-amber-100 text-amber-700"
                                     }`}>
                                     {booking.status}

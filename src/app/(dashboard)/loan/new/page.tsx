@@ -35,6 +35,7 @@ function LoanPageContent() {
         date: string
         startTime: string
         endTime: string
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         details: any
     }) => {
         const keperluan = group.details?.keperluan || '-'
@@ -61,6 +62,7 @@ function LoanPageContent() {
         const year = todayDate.getFullYear()
 
         // Generate nomor surat
+        // eslint-disable-next-line
         const nomorSurat = `03/KI.02/03-01.05.04/01.${String(Date.now()).slice(-2)}`
 
         // UISI Logo as base64 (simple text-based logo for HTML)
@@ -485,6 +487,7 @@ function LoanPageContent() {
                                 startTime: string
                                 endTime: string
                                 status: string
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 details: any
                                 alasanPenolakan?: string
                                 lastHour: number

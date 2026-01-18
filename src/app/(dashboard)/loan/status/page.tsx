@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import {
     Table,
     TableBody,
@@ -23,7 +23,7 @@ interface Loan {
 }
 
 export default function LoanStatusPage() {
-    const [myLoans, setMyLoans] = useState<Loan[]>(() => {
+    const [myLoans] = useState<Loan[]>(() => {
         // Load from local storage or use dummy data
         if (typeof window !== 'undefined') {
             const storedLoans = JSON.parse(localStorage.getItem("loans") || "[]")
